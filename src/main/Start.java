@@ -10,6 +10,7 @@ public class Start {
     public static void main(String args[]) {
 
         JWIAccessorFacade accessor = new JWIAccessorFacade();
-        accessor.test();
+        accessor.test("chair");
+        accessor.getRelatedSynSetWords("chair");
     }
 }

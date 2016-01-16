@@ -2,14 +2,15 @@ package jwi;
 
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
-import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.IWord;
-import edu.mit.jwi.item.IWordID;
-import edu.mit.jwi.item.POS;
+import edu.mit.jwi.item.*;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by shahbaaz on 1/16/16.
@@ -37,17 +38,42 @@ public class JWIAccessorFacade {
         }
     }
 
-    public void test() {
+    public void test(String testWord) {
 
         initialize();
 
-        // look up first sense of the word "dog"
-        IIndexWord idxWord = dict.getIndexWord("dog", POS.NOUN);
+        IIndexWord idxWord = dict.getIndexWord(testWord, POS.NOUN);
         IWordID wordID = idxWord.getWordIDs().get(0);
         IWord word = dict.getWord(wordID);
         System.out.println("Id = " + wordID);
         System.out.println("Lemma = " + word.getLemma());
-        System.out.println("Gloss = " + word.getSynset().getGloss());
+        System.out.println("Gloss = " + word.getAdjectiveMarker());
+        System.out.println("Lexical ID = " + word.getLexicalID());
+        System.out.println("Related Map = " + word.getRelatedMap());
+        System.out.println("Related Words = " + word.getRelatedWords());
+        System.out.println("Sense Key = " + word.getSenseKey());
+        System.out.println("Verb Frames = " + word.getVerbFrames());
+        System.out.println("Synset Words = " + word.getSynset().getWords());
+        System.out.println("Related Synsets = " + word.getSynset().getRelatedSynsets());
+        System.out.println("Synset Type = " + word.getSynset().getType());
+    }
 
+    public List<String> getRelatedSynSetWords(String word) {
+        IIndexWord idxWord = dict.getIndexWord(word, POS.NOUN);
+        IWordID wordID = idxWord.getWordIDs().get(0);
+        IWord iWord = dict.getWord(wordID);
+
+        List<ISynsetID> synSetIds = iWord.getSynset().getRelatedSynsets();
+        List<String> synSet = new ArrayList<>();
+
+        for(ISynsetID id: synSetIds) {
+            ISynset s = dict.getSynset(id);
+            for(IWord w: s.getWords()) {
+                synSet.add(w.getLemma());
+                System.out.println(w.getLemma());
+            }
+        }
+
+        return synSet;
     }
 }

@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils.*;
 /**
  * Created by shahbaaz on 1/16/16.
  */
@@ -58,22 +60,38 @@ public class JWIAccessorFacade {
         System.out.println("Synset Type = " + word.getSynset().getType());
     }
 
-    public List<String> getRelatedSynSetWords(String word) {
+    public List<ISynsetID> getRelatedSynSets(String word) {
         IIndexWord idxWord = dict.getIndexWord(word, POS.NOUN);
         IWordID wordID = idxWord.getWordIDs().get(0);
         IWord iWord = dict.getWord(wordID);
-
         List<ISynsetID> synSetIds = iWord.getSynset().getRelatedSynsets();
-        List<String> synSet = new ArrayList<>();
+        return synSetIds;
+    }
 
+    public List<String> getClosestWords(String word, int count)
+    {
+        List<String> synSet = new ArrayList<String>();
+        List<ISynsetID> synSetIds = this.getRelatedSynSets(word);
         for(ISynsetID id: synSetIds) {
             ISynset s = dict.getSynset(id);
+
+
             for(IWord w: s.getWords()) {
-                synSet.add(w.getLemma());
-                System.out.println(w.getLemma());
+                if (!((w.getLemma().contains(word)) && word.contains(w.getLemma()))) {
+                    System.out.println(w.getLemma());
+                    synSet.add(w.getLemma());
+                    w.getPOS();
+                    count--;
+                }
+            }
+            if(count == 0)
+            {
+                break;
             }
         }
-
         return synSet;
     }
+
 }
+
+
